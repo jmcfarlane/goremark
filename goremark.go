@@ -43,6 +43,9 @@ var (
         font-weight: normal;
       }
       .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+	  a {
+	    text-decoration: none;
+	  }
     </style>
   </head>
   <body>
