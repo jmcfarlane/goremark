@@ -64,7 +64,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Fprintf(w, "Error:\n\n", err)
 	} else {
-		fmt.Fprintf(w, header+string(b)+footer)
+		fmt.Fprint(w, header+string(b)+footer)
 	}
 }
 
