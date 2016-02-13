@@ -63,11 +63,19 @@ func getHomeDirPath() string {
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
-	b, err := ioutil.ReadFile(*file)
-	if err != nil {
-		fmt.Fprintf(w, "Error:\n\n", err)
+	path := r.URL.Path[1:]
+	if path == "" {
+		// Serve the wrapped markdown.
+		b, err := ioutil.ReadFile(*file)
+		if err != nil {
+			fmt.Fprintf(w, "Error:\n\n", err)
+		} else {
+			fmt.Fprint(w, header+string(b)+footer)
+		}
 	} else {
-		fmt.Fprint(w, header+string(b)+footer)
+		// Accommodate static files when the markdown is within a
+		// subdirectory.
+		http.Redirect(w, r, "/"+*static+"/"+path, http.StatusFound)
 	}
 }
 
