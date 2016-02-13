@@ -12,10 +12,11 @@ import (
 // Command line arguments and constants
 // Usage: https://github.com/gnab/remark/wiki/Markdown
 var (
-	file   = flag.String("f", "README.md", "Markdown file to consume")
-	listen = flag.String("l", ":8080", "TCP Port to serve from")
-	static = flag.String("s", "docs", "Directory for static files")
-	footer = `
+	file    = flag.String("f", "README.md", "Markdown file to consume")
+	listen  = flag.String("l", ":8080", "TCP Port to serve from")
+	project = flag.String("p", "", "Directory for the project root")
+	static  = flag.String("s", "docs", "Directory for static files")
+	footer  = `
     </textarea>
     <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
     </script>
@@ -82,8 +83,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	flag.Parse()
 	static := "/" + *static + "/"
+	projectDir := http.Dir(filepath.Dir(*file))
+	if *project != "" {
+		projectDir = http.Dir(*project)
+	}
+	fmt.Printf("Serving static files from (project root): %s/\n", projectDir)
 	http.HandleFunc("/", handler)
-	http.Handle(static, http.FileServer(http.Dir(filepath.Dir(*file))))
+	http.Handle(static, http.FileServer(projectDir))
 	fmt.Println("Listening on", *listen)
 	http.ListenAndServe(*listen, nil)
 }
